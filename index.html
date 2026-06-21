@@ -35,22 +35,33 @@
     align-items: center;
     justify-content: center;
     padding: 10px;
-    gap: 16px;
+    gap: 10px;
     width: 100%;
   }
 
+  #progress-text {
+    position: fixed;
+    bottom: 8px;
+    right: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--sub);
+    opacity: 0.4;
+    z-index: 90;
+    pointer-events: none;
+  }
   #prompt-text {
     font-size: 22px;
     font-weight: bold;
     color: var(--sub);
     text-align: center;
+    margin-bottom: 4px;
   }
 
-  #combo-area {
-    display: flex; flex-direction: column; align-items: center; gap: 14px;
-    width: 100%;
-  }
+  .game-area { display: none; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+  .game-area.active { display: flex; }
 
+  /* ---- 判断モード：商品ひとつ＋さいふひとつ ---- */
   #c-product {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
     background: white; border: 2px solid var(--border); border-radius: 18px;
@@ -66,14 +77,6 @@
     padding: 14px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px;
   }
   #c-wallet-label { font-size: 14px; font-weight: bold; color: var(--sub); }
-  .wallet-coins {
-    display: flex; flex-wrap: wrap; gap: 4px;
-    justify-content: center; align-items: center;
-    min-height: 40px;
-  }
-  .empty-wallet { font-size: 14px; color: var(--sub); }
-  .wallet-total { font-size: 19px; font-weight: bold; color: var(--accent); }
-  .wallet-total.hide { display: none; }
 
   #judge-btn-row {
     display: flex; gap: 14px; width: 100%; max-width: var(--wallet-max);
@@ -88,6 +91,48 @@
   .judge-btn.disabled { pointer-events: none; }
   #btn-kaeru  { background: var(--accent); color: white; }
   #btn-kaenai { background: #d8c8a0; color: var(--sub); }
+
+  /* ---- くらべるモード：商品1つ+さいふ2つ / さいふ1つ+商品2つ ---- */
+  #m1-product {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: white; border: 2px solid var(--border); border-radius: 18px;
+    padding: 14px 22px; width: 100%; max-width: var(--wallet-max);
+  }
+  #m1-product-emoji { font-size: 56px; line-height: 1; }
+  #m1-product-price { font-size: 30px; font-weight: bold; color: var(--text); }
+
+  #m2-wallet {
+    width: 100%; max-width: var(--wallet-max);
+    background: white; border: 2px solid var(--border); border-radius: 18px;
+    padding: 14px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+
+  #m1-wallets-row, #m2-products-row {
+    display: flex; gap: 14px; width: 100%; max-width: var(--wallet-max);
+  }
+
+  .wallet-option, .product-option {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 16px 10px; border-radius: 20px; border: 3px solid var(--border);
+    background: var(--surface); cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.14s, border-color 0.14s, box-shadow 0.14s, background 0.14s;
+  }
+  .wallet-option:active, .product-option:active { transform: scale(0.95); }
+  .wallet-option.disabled, .product-option.disabled { pointer-events: none; }
+
+  .wallet-coins {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    justify-content: center; align-items: center;
+    min-height: 40px;
+  }
+  .empty-wallet { font-size: 14px; color: var(--sub); }
+  .wallet-total { font-size: 19px; font-weight: bold; color: var(--accent); }
+  .wallet-total.hide { display: none; }
+
+  .po-emoji { font-size: 48px; line-height: 1; }
+  .po-price { font-size: 23px; font-weight: bold; color: var(--text); }
 
   @keyframes pulseCorrect {
     0% { transform: scale(1); }
@@ -114,8 +159,8 @@
 
   /* ===== トースト ===== */
   #toast {
-    position: fixed; top:50%; left:50%;
-    transform: translate(-50%,-50%) scale(0.6);
+    position: fixed; top: 18px; left:50%;
+    transform: translate(-50%, -16px) scale(0.85);
     background: rgba(255,200,100,0.97);
     color: #3d2c00; font-size:26px; font-weight:bold;
     padding:18px 34px; border-radius:24px;
@@ -124,7 +169,7 @@
     text-align: center;
     box-shadow: 0 4px 20px rgba(180,120,0,0.3);
   }
-  #toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  #toast.show { opacity:1; transform:translate(-50%, 0) scale(1); }
 
   /* ===== 左下ボタン群 ===== */
   #bottom-left-btns {
@@ -146,6 +191,21 @@
     -webkit-tap-highlight-color: transparent;
   }
   #gear-btn:hover { opacity: 0.5; }
+
+  /* ===== RESULT ===== */
+  #result-screen {
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 18px; padding: 20px;
+  }
+  #result-emoji { font-size: 60px; }
+  #result-title { font-size: 26px; font-weight: bold; color: var(--text); text-align: center; }
+  #result-msg { font-size: 18px; font-weight: bold; color: var(--accent); text-align: center; }
+  #result-restart-btn {
+    padding: 14px 44px; background: var(--accent); color: white;
+    border: none; border-radius: 26px;
+    font-size: 18px; font-weight: bold; cursor: pointer; font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
 
   /* ===== SETTINGS ===== */
   #settings-screen {
@@ -177,7 +237,31 @@
   .s-val { font-size: 15px; font-weight: bold; color: var(--text); min-width: 30px; text-align: center; }
   .s-range-lbl { font-size: 12px; color: var(--sub); margin: 0 2px; white-space: nowrap; }
 
-  /* ONOFFトグル */
+  .seg-toggle {
+    display: flex;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    flex-shrink: 0;
+    width: 100%;
+  }
+  .seg-btn {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 7px 8px;
+    border: none;
+    background: white;
+    color: var(--sub);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .seg-btn.active { background: var(--accent); color: white; }
+  .seg-btn:not(:last-child) { border-right: 1px solid var(--border); }
+
   .toggle-switch {
     position: relative; width: 54px; height: 28px;
     cursor: pointer; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
@@ -216,31 +300,83 @@
 
 <!-- ===== MAIN ===== -->
 <div id="main-screen" class="screen active">
+  <div id="progress-text">1/15</div>
   <div id="prompt-text">これ、かえる？ かえない？</div>
 
-  <div id="combo-area">
+  <!-- 判断モード -->
+  <div id="judge-area" class="game-area">
     <div id="c-product">
       <div id="c-product-label">ほしいもの</div>
       <div id="c-product-emoji">🍩</div>
       <div id="c-product-price">120円</div>
     </div>
-
     <div id="c-wallet">
       <div id="c-wallet-label">さいふのなか</div>
       <div class="wallet-coins" id="c-wallet-coins"></div>
       <div class="wallet-total" id="c-wallet-total">0円</div>
     </div>
-
     <div id="judge-btn-row">
       <button class="judge-btn" id="btn-kaeru">かえる</button>
       <button class="judge-btn" id="btn-kaenai">かえない</button>
     </div>
   </div>
+
+  <!-- くらべるモード -->
+  <div id="compare-area" class="game-area">
+    <div id="mode1-area" class="game-area">
+      <div id="m1-product">
+        <div id="m1-product-emoji">🍩</div>
+        <div id="m1-product-price">120円</div>
+      </div>
+      <div id="m1-wallets-row"></div>
+    </div>
+    <div id="mode2-area" class="game-area">
+      <div id="m2-wallet"></div>
+      <div id="m2-products-row"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="result-screen" class="screen">
+  <div id="result-emoji">🎉</div>
+  <div id="result-title">15問中 12問 せいかい！</div>
+  <div id="result-msg">よくできました！</div>
+  <button id="result-restart-btn">もういちど</button>
 </div>
 
 <!-- ===== SETTINGS ===== -->
 <div id="settings-screen" class="screen">
   <div id="settings-title-bar">せってい</div>
+
+  <div class="s-card">
+    <h3>あそびかた</h3>
+    <div class="seg-toggle" id="gametype-seg">
+      <button class="seg-btn active" data-gametype="judge">買える/買えない</button>
+      <button class="seg-btn" data-gametype="compare">どっちが買えるか</button>
+    </div>
+    <div id="compare-sub-wrap" style="display:none; margin-top:10px;">
+      <div class="s-lbl" style="margin-bottom:6px;">くらべるもの</div>
+      <div class="seg-toggle" id="compare-sub-seg">
+        <button class="seg-btn active" data-mode="wallet">さいふを選ぶ</button>
+        <button class="seg-btn" data-mode="product">商品を選ぶ</button>
+        <button class="seg-btn" data-mode="random">ランダム</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-card">
+    <h3>もんだいすう</h3>
+    <div class="s-row" style="border-bottom:none;">
+      <div class="s-lbl">なんもん？</div>
+      <div class="s-ctrl">
+        <button class="step-btn" id="s-qcount-minus">－</button>
+        <div class="s-val" id="s-qcount">15</div>
+        <button class="step-btn" id="s-qcount-plus">＋</button>
+        <span class="s-range-lbl">もん</span>
+      </div>
+    </div>
+  </div>
 
   <div class="s-card">
     <h3>ひょうじ</h3>
@@ -308,7 +444,7 @@
 <div id="toast"></div>
 
 <div id="bottom-left-btns">
-  <button id="next-btn">つぎのもんだい</button>
+  <button id="next-btn">とばす</button>
   <button id="gear-btn">
     <svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" width="32" height="32">
       <circle cx="12" cy="12" r="3"/>
@@ -332,8 +468,15 @@ const KIZAMI_OPTIONS = [1, 10, 50, 100];
 let minAmount = 100, maxAmount = 500, kizami = 10;
 let marginMin = 10, marginMax = 200;
 let showTotal = true;
+let gameType = 'judge';        // 'judge' | 'compare'
+let compareSubMode = 'wallet'; // 'wallet' | 'product' | 'random'
+
+let totalQuestions = 15;
+let currentQuestionNum = 1;
+let correctCount = 0;
 
 let currentRound = null;
+let currentCompareMode = null; // compareモードの今回のサブ種類('wallet'|'product')
 let busy = false;
 
 const COIN_MINI = 38, NOTE_W_MINI = 62, NOTE_H_MINI = 36;
@@ -419,23 +562,26 @@ function randInRangeStep(lo, hi, step) {
 function pickEmoji() {
   return PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)][0];
 }
+function shuffle2(a, b) {
+  return Math.random() < 0.5 ? [a, b] : [b, a];
+}
 
-/* ===== もんだい生成：商品１つ＋さいふ１つ ===== */
-function generateRound() {
+/* ===== もんだい生成：判断モード（商品1つ＋さいふ1つ） ===== */
+function generateJudgeRound() {
   const P = randInRangeStep(minAmount, maxAmount, kizami);
   const buyableThisRound = Math.random() < 0.5;
 
   let W;
   if (buyableThisRound) {
     const margin = randInRangeStep(marginMin, marginMax, kizami);
-    W = P + margin; // 必ず P より多い
+    W = P + margin;
   } else {
     const downHi = Math.min(marginMax, P);
     const downLo = Math.min(marginMin, downHi);
     const margin = randInRangeStep(downLo, downHi, kizami);
     W = P - margin;
     if (W < 0) W = 0;
-    if (W >= P) W = Math.max(0, P - kizami); // 必ず P より少ない
+    if (W >= P) W = Math.max(0, P - kizami);
   }
 
   currentRound = {
@@ -444,9 +590,8 @@ function generateRound() {
     ok: W >= P
   };
 }
-
-/* ===== 描画 ===== */
-function renderRound() {
+function renderJudgeRound() {
+  document.getElementById('prompt-text').textContent = 'これ、かえる？ かえない？';
   document.getElementById('c-product-emoji').textContent = currentRound.product.emoji;
   document.getElementById('c-product-price').textContent = currentRound.product.price + '円';
 
@@ -458,8 +603,6 @@ function renderRound() {
   document.getElementById('btn-kaeru').classList.remove('disabled', 'correct-flash', 'wrong-flash');
   document.getElementById('btn-kaenai').classList.remove('disabled', 'correct-flash', 'wrong-flash');
 }
-
-/* ===== 判定 ===== */
 function onJudge(answerIsKaeru) {
   if (busy) return;
   busy = true;
@@ -470,29 +613,185 @@ function onJudge(answerIsKaeru) {
 
   const correct = answerIsKaeru === currentRound.ok;
   const tappedBtn = answerIsKaeru ? btnKaeru : btnKaenai;
-  const otherBtn = answerIsKaeru ? btnKaenai : btnKaeru;
   const trueBtn = currentRound.ok ? btnKaeru : btnKaenai;
 
   if (correct) {
     tappedBtn.classList.add('correct-flash');
     playCharin();
     showToast('せいかい！', 1200);
-    setTimeout(() => { busy = false; newRound(); }, 1100);
+    advanceAfterAnswer(true, 1100);
   } else {
     tappedBtn.classList.add('wrong-flash');
     trueBtn.classList.add('correct-flash');
     playBuzz();
     showToast(currentRound.ok ? 'おしい！ かえるよ' : 'おしい！ かえないよ', 1600);
-    setTimeout(() => { busy = false; newRound(); }, 1700);
+    advanceAfterAnswer(false, 1700);
   }
 }
 
-/* ===== ラウンド送り ===== */
-function newRound() {
+/* ===== もんだい生成：くらべるモード（さいふを選ぶ） ===== */
+function generateWalletRound() {
+  const P = randInRangeStep(minAmount, maxAmount, kizami);
+  const marginUp = randInRangeStep(marginMin, marginMax, kizami);
+  const buyableTotal = P + marginUp;
+
+  const downHi = Math.min(marginMax, P);
+  const downLo = Math.min(marginMin, downHi);
+  const marginDown = randInRangeStep(downLo, downHi, kizami);
+  let notBuyableTotal = P - marginDown;
+  if (notBuyableTotal < 0) notBuyableTotal = 0;
+  if (notBuyableTotal >= P) notBuyableTotal = Math.max(0, P - kizami);
+
+  currentRound = {
+    product: { emoji: pickEmoji(), price: P },
+    options: shuffle2(
+      { total: buyableTotal, ok: true },
+      { total: notBuyableTotal, ok: false }
+    )
+  };
+}
+
+/* ===== もんだい生成：くらべるモード（商品を選ぶ） ===== */
+function generateProductRound() {
+  const W = randInRangeStep(minAmount, maxAmount, kizami);
+  const marginUp = randInRangeStep(marginMin, marginMax, kizami);
+  const notBuyablePrice = W + marginUp;
+
+  const downHiRaw = Math.min(marginMax, W - kizami);
+  const downHi = Math.max(downHiRaw, 0);
+  const downLo = Math.min(marginMin, downHi);
+  let marginDown = downHi > 0 ? randInRangeStep(downLo, downHi, kizami) : kizami;
+  let buyablePrice = W - marginDown;
+  if (buyablePrice < kizami) buyablePrice = kizami;
+  if (buyablePrice >= W) buyablePrice = Math.max(kizami, W - kizami);
+
+  const e1 = pickEmoji();
+  let e2 = pickEmoji();
+  let guard = 0;
+  while (e2 === e1 && guard++ < 20) e2 = pickEmoji();
+
+  currentRound = {
+    wallet: { total: W },
+    options: shuffle2(
+      { emoji: e1, price: buyablePrice, ok: true },
+      { emoji: e2, price: notBuyablePrice, ok: false }
+    )
+  };
+}
+
+function renderCompareRound() {
+  document.getElementById('mode1-area').classList.toggle('active', currentCompareMode === 'wallet');
+  document.getElementById('mode2-area').classList.toggle('active', currentCompareMode === 'product');
+
+  if (currentCompareMode === 'wallet') {
+    document.getElementById('prompt-text').textContent = 'かえる さいふは どっち？';
+    document.getElementById('m1-product-emoji').textContent = currentRound.product.emoji;
+    document.getElementById('m1-product-price').textContent = currentRound.product.price + '円';
+
+    const row = document.getElementById('m1-wallets-row');
+    row.innerHTML = '';
+    currentRound.options.forEach(opt => {
+      const box = document.createElement('div');
+      box.className = 'wallet-option';
+      box.innerHTML = `
+        <div class="wallet-coins">${coinsHTML(decompose(opt.total))}</div>
+        <div class="wallet-total${showTotal ? '' : ' hide'}">${opt.total}円</div>`;
+      box.addEventListener('pointerdown', e => { e.preventDefault(); onCompareSelect(opt, box, row); });
+      row.appendChild(box);
+    });
+  } else {
+    document.getElementById('prompt-text').textContent = 'かえる しょうひんは どっち？';
+    const wbox = document.getElementById('m2-wallet');
+    wbox.innerHTML = `
+      <div class="wallet-coins">${coinsHTML(decompose(currentRound.wallet.total))}</div>
+      <div class="wallet-total${showTotal ? '' : ' hide'}">${currentRound.wallet.total}円</div>`;
+
+    const row = document.getElementById('m2-products-row');
+    row.innerHTML = '';
+    currentRound.options.forEach(opt => {
+      const box = document.createElement('div');
+      box.className = 'product-option';
+      box.innerHTML = `
+        <div class="po-emoji">${opt.emoji}</div>
+        <div class="po-price">${opt.price}円</div>`;
+      box.addEventListener('pointerdown', e => { e.preventDefault(); onCompareSelect(opt, box, row); });
+      row.appendChild(box);
+    });
+  }
+}
+function onCompareSelect(opt, box, row) {
+  if (busy) return;
+  busy = true;
+  [...row.children].forEach(b => b.classList.add('disabled'));
+
+  if (opt.ok) {
+    box.classList.add('correct-flash');
+    playCharin();
+    showToast('せいかい！かえるね', 1200);
+    advanceAfterAnswer(true, 1100);
+  } else {
+    box.classList.add('wrong-flash');
+    const correctIdx = currentRound.options.indexOf(opt) === 0 ? 1 : 0;
+    row.children[correctIdx].classList.add('correct-flash');
+    playBuzz();
+    showToast('おしい！こっちが かえるよ', 1600);
+    advanceAfterAnswer(false, 1700);
+  }
+}
+
+/* ===== クイズ進行（共通） ===== */
+function updateProgress() {
+  document.getElementById('progress-text').textContent = currentQuestionNum + '/' + totalQuestions;
+}
+function showRound() {
+  updateProgress();
+  document.getElementById('judge-area').classList.toggle('active', gameType === 'judge');
+  document.getElementById('compare-area').classList.toggle('active', gameType === 'compare');
+
+  if (gameType === 'judge') {
+    generateJudgeRound();
+    renderJudgeRound();
+  } else {
+    currentCompareMode = compareSubMode === 'random' ? (Math.random() < 0.5 ? 'wallet' : 'product') : compareSubMode;
+    if (currentCompareMode === 'wallet') generateWalletRound(); else generateProductRound();
+    renderCompareRound();
+  }
+}
+function advanceAfterAnswer(correct, delay) {
+  if (correct) correctCount++;
+  currentQuestionNum++;
+  setTimeout(() => {
+    busy = false;
+    if (currentQuestionNum > totalQuestions) {
+      showResults();
+    } else {
+      showRound();
+    }
+  }, delay);
+}
+function initQuiz() {
+  currentQuestionNum = 1;
+  correctCount = 0;
   busy = false;
   document.getElementById('toast').classList.remove('show');
-  generateRound();
-  renderRound();
+  document.getElementById('result-screen').classList.remove('active');
+  document.getElementById('main-screen').classList.add('active');
+  document.getElementById('bottom-left-btns').style.display = 'flex';
+  showRound();
+}
+function showResults() {
+  document.getElementById('main-screen').classList.remove('active');
+  document.getElementById('bottom-left-btns').style.display = 'none';
+  const ratio = totalQuestions > 0 ? correctCount / totalQuestions : 0;
+  let msg, emoji;
+  if (ratio >= 0.9)      { msg = 'パーフェクトに ちかいね！すごい！'; emoji = '🏆'; }
+  else if (ratio >= 0.7) { msg = 'よくできました！'; emoji = '🎉'; }
+  else if (ratio >= 0.4) { msg = 'がんばったね！'; emoji = '😊'; }
+  else                   { msg = 'れんしゅう できたね！'; emoji = '🙂'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = totalQuestions + '問中 ' + correctCount + '問 せいかい！';
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-screen').classList.add('active');
 }
 
 /* ===== トースト ===== */
@@ -537,14 +836,24 @@ function playBuzz() {
 function openSettings() {
   buildSettingsUI();
   document.getElementById('main-screen').classList.remove('active');
+  document.getElementById('result-screen').classList.remove('active');
   document.getElementById('settings-screen').classList.add('active');
 }
 function closeSettings() {
   document.getElementById('settings-screen').classList.remove('active');
-  document.getElementById('main-screen').classList.add('active');
-  newRound();
+  initQuiz();
 }
 function buildSettingsUI() {
+  document.querySelectorAll('#gametype-seg .seg-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.gametype === gameType);
+  });
+  document.getElementById('compare-sub-wrap').style.display = gameType === 'compare' ? 'block' : 'none';
+  document.querySelectorAll('#compare-sub-seg .seg-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === compareSubMode);
+  });
+
+  document.getElementById('s-qcount').textContent = totalQuestions;
+
   document.getElementById('toggle-show-total').checked = showTotal;
   document.getElementById('s-min-amount').textContent = minAmount;
   document.getElementById('s-max-amount').textContent = maxAmount;
@@ -559,6 +868,10 @@ function buildSettingsUI() {
     btn.textContent = k + '円'; btn.dataset.kizami = k;
     kg.appendChild(btn);
   }
+}
+function changeQCount(delta) {
+  totalQuestions = Math.max(5, totalQuestions + delta * 5);
+  document.getElementById('s-qcount').textContent = totalQuestions;
 }
 function changeMinAmount(delta) {
   minAmount = Math.max(kizami, minAmount + delta * kizami);
@@ -586,9 +899,27 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-kaeru').addEventListener('pointerdown', e => { e.preventDefault(); onJudge(true); });
   document.getElementById('btn-kaenai').addEventListener('pointerdown', e => { e.preventDefault(); onJudge(false); });
 
-  document.getElementById('next-btn').addEventListener('click', () => { newRound(); });
+  document.getElementById('next-btn').addEventListener('click', () => { if (!busy) showRound(); });
   document.getElementById('gear-btn').addEventListener('click', openSettings);
   document.getElementById('s-back-btn').addEventListener('click', closeSettings);
+  document.getElementById('result-restart-btn').addEventListener('click', initQuiz);
+
+  document.getElementById('gametype-seg').addEventListener('click', e => {
+    const btn = e.target.closest('.seg-btn');
+    if (!btn) return;
+    gameType = btn.dataset.gametype;
+    document.querySelectorAll('#gametype-seg .seg-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('compare-sub-wrap').style.display = gameType === 'compare' ? 'block' : 'none';
+  });
+  document.getElementById('compare-sub-seg').addEventListener('click', e => {
+    const btn = e.target.closest('.seg-btn');
+    if (!btn) return;
+    compareSubMode = btn.dataset.mode;
+    document.querySelectorAll('#compare-sub-seg .seg-btn').forEach(b => b.classList.toggle('active', b === btn));
+  });
+
+  document.getElementById('s-qcount-minus').addEventListener('click', () => changeQCount(-1));
+  document.getElementById('s-qcount-plus').addEventListener('click',  () => changeQCount(+1));
 
   document.getElementById('toggle-show-total').addEventListener('change', e => {
     showTotal = e.target.checked;
@@ -620,7 +951,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('s-margin-max').textContent = marginMax;
   });
 
-  setTimeout(() => { newRound(); }, 50);
+  setTimeout(() => { initQuiz(); }, 50);
 });
 </script>
 </body>
