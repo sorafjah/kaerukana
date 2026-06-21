@@ -485,13 +485,24 @@ const PRODUCTS = [
 
 /* ===== SVG（コイン・おさつ） ===== */
 function coinSVG(val, size) {
+  if (val === 500) {
+    // 500円玉だけ特別あつかい：ふち金色＋まんなか銀色のツートンで100円玉とはっきり区別する
+    const r = size / 2, ts = size * 0.24;
+    return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="${r}" cy="${r}" r="${r-1}" fill="#5a5a5a"/>
+  <circle cx="${r}" cy="${r}" r="${r-3}" fill="#ced2d6"/>
+  <circle cx="${r}" cy="${r}" r="${r*0.6}" fill="#d9a521"/>
+  <circle cx="${r}" cy="${r}" r="${r*0.6}" fill="none" stroke="#8a6200" stroke-width="1.6"/>
+  <text x="${r}" y="${r + ts*0.38}" text-anchor="middle" font-size="${ts}" font-weight="900"
+    fill="#4a2e00" font-family="BIZ UDPGothic,sans-serif">500</text>
+</svg>`;
+  }
   const C = {
     1:   { bg:'#b2b2b2', inner:'#d4d4d4', rim:'#444',    text:'1',   hole:false },
     5:   { bg:'#c8a84b', inner:'#e0c060', rim:'#5a3a00', text:'5',   hole:true  },
     10:  { bg:'#b87333', inner:'#d4946a', rim:'#4a1800', text:'10',  hole:false },
     50:  { bg:'#b0b0b0', inner:'#d0d0d0', rim:'#333',    text:'50',  hole:true  },
     100: { bg:'#a8a8a8', inner:'#c8c8c8', rim:'#2a2a2a', text:'100', hole:false },
-    500: { bg:'#a0a8b0', inner:'#c0c8d0', rim:'#1a3060', text:'500', hole:false },
   };
   const c = C[val], r = size/2, holeR = size*0.11;
   const ts = val>=100 ? size*0.26 : val>=10 ? size*0.30 : size*0.36;
