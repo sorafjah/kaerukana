@@ -134,6 +134,9 @@
   .po-emoji { font-size: 48px; line-height: 1; }
   .po-price { font-size: 23px; font-weight: bold; color: var(--text); }
 
+  #compare-cant-row { display: flex; width: 100%; max-width: var(--wallet-max); }
+  #btn-compare-cant { background: #d8c8a0; color: var(--sub); }
+
   @keyframes pulseCorrect {
     0% { transform: scale(1); }
     40% { transform: scale(1.08); }
@@ -172,25 +175,14 @@
   #toast.show { opacity:1; transform:translate(-50%, 0) scale(1); }
 
   /* ===== 左下ボタン群 ===== */
-  #bottom-left-btns {
-    position: fixed; bottom: 8px; left: 8px;
-    display: flex; flex-direction: column; align-items: flex-start;
-    gap: 5px; z-index: 100;
-  }
-  #next-btn {
-    background: #e8e0d0; color: var(--sub);
-    font-family: inherit; font-size: 13px; font-weight: bold;
-    padding: 7px 13px; border: none; border-radius: 18px;
-    cursor: pointer; -webkit-tap-highlight-color: transparent;
-    opacity: 0.85; white-space: nowrap;
-  }
-  #next-btn:active { transform: scale(0.93); }
   #gear-btn {
-    width: 32px; height: 32px; background: none; border: none;
-    cursor: pointer; opacity: 0.22; padding: 0;
+    position: fixed; top: 8px; left: 8px;
+    width: 36px; height: 36px; background: none; border: none;
+    cursor: pointer; opacity: 0.28; padding: 0;
+    z-index: 100;
     -webkit-tap-highlight-color: transparent;
   }
-  #gear-btn:hover { opacity: 0.5; }
+  #gear-btn:hover { opacity: 0.55; }
 
   /* ===== RESULT ===== */
   #result-screen {
@@ -299,7 +291,7 @@
 <body>
 
 <!-- ===== MAIN ===== -->
-<div id="main-screen" class="screen active">
+<div id="main-screen" class="screen">
   <div id="progress-text">1/15</div>
   <div id="prompt-text">これ、かえる？ かえない？</div>
 
@@ -334,6 +326,9 @@
       <div id="m2-wallet"></div>
       <div id="m2-products-row"></div>
     </div>
+    <div id="compare-cant-row">
+      <button class="judge-btn" id="btn-compare-cant">どちらも 買えない</button>
+    </div>
   </div>
 </div>
 
@@ -346,7 +341,7 @@
 </div>
 
 <!-- ===== SETTINGS ===== -->
-<div id="settings-screen" class="screen">
+<div id="settings-screen" class="screen active">
   <div id="settings-title-bar">せってい</div>
 
   <div class="s-card">
@@ -405,7 +400,7 @@
       <div class="s-lbl">上限</div>
       <div class="s-ctrl">
         <button class="step-btn" id="s-max-minus">－</button>
-        <div class="s-val" id="s-max-amount">500</div>
+        <div class="s-val" id="s-max-amount">800</div>
         <button class="step-btn" id="s-max-plus">＋</button>
         <span class="s-range-lbl">円</span>
       </div>
@@ -438,20 +433,17 @@
     </div>
   </div>
 
-  <button id="s-back-btn">もどる</button>
+  <button id="s-back-btn">はじめる</button>
 </div>
 
 <div id="toast"></div>
 
-<div id="bottom-left-btns">
-  <button id="next-btn">とばす</button>
-  <button id="gear-btn">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" width="32" height="32">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
-  </button>
-</div>
+<button id="gear-btn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" width="32" height="32">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+</button>
 
 <script>
 const DENOMS = [
@@ -465,7 +457,7 @@ const DENOMS = [
 ];
 const KIZAMI_OPTIONS = [1, 10, 50, 100];
 
-let minAmount = 100, maxAmount = 500, kizami = 10;
+let minAmount = 100, maxAmount = 800, kizami = 10;
 let marginMin = 10, marginMax = 200;
 let showTotal = true;
 let gameType = 'judge';        // 'judge' | 'compare'
@@ -632,56 +624,98 @@ function onJudge(answerIsKaeru) {
 /* ===== もんだい生成：くらべるモード（さいふを選ぶ） ===== */
 function generateWalletRound() {
   const P = randInRangeStep(minAmount, maxAmount, kizami);
-  const marginUp = randInRangeStep(marginMin, marginMax, kizami);
-  const buyableTotal = P + marginUp;
+  const noneBuyable = Math.random() < 0.5; // どちらも買えないパターンを半分の確率で
 
   const downHi = Math.min(marginMax, P);
   const downLo = Math.min(marginMin, downHi);
-  const marginDown = randInRangeStep(downLo, downHi, kizami);
-  let notBuyableTotal = P - marginDown;
-  if (notBuyableTotal < 0) notBuyableTotal = 0;
-  if (notBuyableTotal >= P) notBuyableTotal = Math.max(0, P - kizami);
+  function makeNotBuyableTotal() {
+    const marginDown = randInRangeStep(downLo, downHi, kizami);
+    let t = P - marginDown;
+    if (t < 0) t = 0;
+    if (t >= P) t = Math.max(0, P - kizami);
+    return t;
+  }
+
+  let options;
+  if (noneBuyable) {
+    // 片方だけ違う金額にして、どちらも買えないようにする
+    let t1 = makeNotBuyableTotal();
+    let t2 = makeNotBuyableTotal();
+    let guard = 0;
+    while (t2 === t1 && guard++ < 10) t2 = makeNotBuyableTotal();
+    options = shuffle2({ total: t1, ok: false }, { total: t2, ok: false });
+  } else {
+    const marginUp = randInRangeStep(marginMin, marginMax, kizami);
+    const buyableTotal = P + marginUp;
+    const notBuyableTotal = makeNotBuyableTotal();
+    options = shuffle2({ total: buyableTotal, ok: true }, { total: notBuyableTotal, ok: false });
+  }
 
   currentRound = {
     product: { emoji: pickEmoji(), price: P },
-    options: shuffle2(
-      { total: buyableTotal, ok: true },
-      { total: notBuyableTotal, ok: false }
-    )
+    options,
+    anyBuyable: !noneBuyable
   };
 }
 
 /* ===== もんだい生成：くらべるモード（商品を選ぶ） ===== */
 function generateProductRound() {
   const W = randInRangeStep(minAmount, maxAmount, kizami);
-  const marginUp = randInRangeStep(marginMin, marginMax, kizami);
-  const notBuyablePrice = W + marginUp;
+  const noneBuyable = Math.random() < 0.5;
 
-  const downHiRaw = Math.min(marginMax, W - kizami);
-  const downHi = Math.max(downHiRaw, 0);
-  const downLo = Math.min(marginMin, downHi);
-  let marginDown = downHi > 0 ? randInRangeStep(downLo, downHi, kizami) : kizami;
-  let buyablePrice = W - marginDown;
-  if (buyablePrice < kizami) buyablePrice = kizami;
-  if (buyablePrice >= W) buyablePrice = Math.max(kizami, W - kizami);
+  function makeNotBuyablePrice() {
+    const marginUp = randInRangeStep(marginMin, marginMax, kizami);
+    return W + marginUp;
+  }
 
   const e1 = pickEmoji();
   let e2 = pickEmoji();
   let guard = 0;
   while (e2 === e1 && guard++ < 20) e2 = pickEmoji();
 
+  let options;
+  if (noneBuyable) {
+    let p1 = makeNotBuyablePrice();
+    let p2 = makeNotBuyablePrice();
+    let g2 = 0;
+    while (p2 === p1 && g2++ < 10) p2 = makeNotBuyablePrice();
+    options = shuffle2({ emoji: e1, price: p1, ok: false }, { emoji: e2, price: p2, ok: false });
+  } else {
+    const downHiRaw = Math.min(marginMax, W - kizami);
+    const downHi = Math.max(downHiRaw, 0);
+    const downLo = Math.min(marginMin, downHi);
+    let marginDown = downHi > 0 ? randInRangeStep(downLo, downHi, kizami) : kizami;
+    let buyablePrice = W - marginDown;
+    if (buyablePrice < kizami) buyablePrice = kizami;
+    if (buyablePrice >= W) buyablePrice = Math.max(kizami, W - kizami);
+    const notBuyablePrice = makeNotBuyablePrice();
+    options = shuffle2({ emoji: e1, price: buyablePrice, ok: true }, { emoji: e2, price: notBuyablePrice, ok: false });
+  }
+
   currentRound = {
     wallet: { total: W },
-    options: shuffle2(
-      { emoji: e1, price: buyablePrice, ok: true },
-      { emoji: e2, price: notBuyablePrice, ok: false }
-    )
+    options,
+    anyBuyable: !noneBuyable
   };
+}
+
+function getActiveCompareRow() {
+  return currentCompareMode === 'wallet'
+    ? document.getElementById('m1-wallets-row')
+    : document.getElementById('m2-products-row');
+}
+function disableAllCompareControls() {
+  const row = getActiveCompareRow();
+  [...row.children].forEach(b => b.classList.add('disabled'));
+  document.getElementById('btn-compare-cant').classList.add('disabled');
 }
 
 function renderCompareRound() {
   document.getElementById('mode1-area').classList.toggle('active', currentCompareMode === 'wallet');
   document.getElementById('mode2-area').classList.toggle('active', currentCompareMode === 'product');
+
+  const cantBtn = document.getElementById('btn-compare-cant');
+  cantBtn.classList.remove('disabled', 'correct-flash', 'wrong-flash');
 
   if (currentCompareMode === 'wallet') {
     document.getElementById('prompt-text').textContent = 'かえる さいふは どっち？';
@@ -696,7 +730,7 @@ function renderCompareRound() {
       box.innerHTML = `
         <div class="wallet-coins">${coinsHTML(decompose(opt.total))}</div>
         <div class="wallet-total${showTotal ? '' : ' hide'}">${opt.total}円</div>`;
-      box.addEventListener('pointerdown', e => { e.preventDefault(); onCompareSelect(opt, box, row); });
+      box.addEventListener('pointerdown', e => { e.preventDefault(); onCompareSelect(opt, box); });
       row.appendChild(box);
     });
   } else {
@@ -714,27 +748,57 @@ function renderCompareRound() {
       box.innerHTML = `
         <div class="po-emoji">${opt.emoji}</div>
         <div class="po-price">${opt.price}円</div>`;
-      box.addEventListener('pointerdown', e => { e.preventDefault(); onCompareSelect(opt, box, row); });
+      box.addEventListener('pointerdown', e => { e.preventDefault(); onCompareSelect(opt, box); });
       row.appendChild(box);
     });
   }
 }
-function onCompareSelect(opt, box, row) {
+function onCompareSelect(opt, box) {
   if (busy) return;
   busy = true;
-  [...row.children].forEach(b => b.classList.add('disabled'));
+  const row = getActiveCompareRow();
+  const cantBtn = document.getElementById('btn-compare-cant');
+  disableAllCompareControls();
 
-  if (opt.ok) {
+  const correct = currentRound.anyBuyable && opt.ok;
+  if (correct) {
     box.classList.add('correct-flash');
     playCharin();
     showToast('せいかい！かえるね', 1200);
     advanceAfterAnswer(true, 1100);
   } else {
     box.classList.add('wrong-flash');
-    const correctIdx = currentRound.options.indexOf(opt) === 0 ? 1 : 0;
+    if (currentRound.anyBuyable) {
+      const correctIdx = currentRound.options.indexOf(opt) === 0 ? 1 : 0;
+      row.children[correctIdx].classList.add('correct-flash');
+      showToast('おしい！こっちが かえるよ', 1600);
+    } else {
+      cantBtn.classList.add('correct-flash');
+      showToast('おしい！ どちらも かえないよ', 1600);
+    }
+    playBuzz();
+    advanceAfterAnswer(false, 1700);
+  }
+}
+function onCompareCant() {
+  if (busy) return;
+  busy = true;
+  const row = getActiveCompareRow();
+  const cantBtn = document.getElementById('btn-compare-cant');
+  disableAllCompareControls();
+
+  const correct = !currentRound.anyBuyable;
+  if (correct) {
+    cantBtn.classList.add('correct-flash');
+    playCharin();
+    showToast('せいかい！', 1200);
+    advanceAfterAnswer(true, 1100);
+  } else {
+    cantBtn.classList.add('wrong-flash');
+    const correctIdx = currentRound.options.findIndex(o => o.ok);
     row.children[correctIdx].classList.add('correct-flash');
     playBuzz();
-    showToast('おしい！こっちが かえるよ', 1600);
+    showToast('おしい！ かえる ほうが あったよ', 1600);
     advanceAfterAnswer(false, 1700);
   }
 }
@@ -776,15 +840,16 @@ function initQuiz() {
   document.getElementById('toast').classList.remove('show');
   document.getElementById('result-screen').classList.remove('active');
   document.getElementById('main-screen').classList.add('active');
-  document.getElementById('bottom-left-btns').style.display = 'flex';
+  document.getElementById('gear-btn').style.display = 'block';
   showRound();
 }
 function showResults() {
   document.getElementById('main-screen').classList.remove('active');
-  document.getElementById('bottom-left-btns').style.display = 'none';
+  document.getElementById('gear-btn').style.display = 'none';
   const ratio = totalQuestions > 0 ? correctCount / totalQuestions : 0;
   let msg, emoji;
-  if (ratio >= 0.9)      { msg = 'パーフェクトに ちかいね！すごい！'; emoji = '🏆'; }
+  if (ratio >= 1)        { msg = 'パーフェクト！'; emoji = '🏆'; }
+  else if (ratio >= 0.9) { msg = 'パーフェクトに ちかいね！すごい！'; emoji = '🎉'; }
   else if (ratio >= 0.7) { msg = 'よくできました！'; emoji = '🎉'; }
   else if (ratio >= 0.4) { msg = 'がんばったね！'; emoji = '😊'; }
   else                   { msg = 'れんしゅう できたね！'; emoji = '🙂'; }
@@ -899,7 +964,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-kaeru').addEventListener('pointerdown', e => { e.preventDefault(); onJudge(true); });
   document.getElementById('btn-kaenai').addEventListener('pointerdown', e => { e.preventDefault(); onJudge(false); });
 
-  document.getElementById('next-btn').addEventListener('click', () => { if (!busy) showRound(); });
+  document.getElementById('btn-compare-cant').addEventListener('pointerdown', e => { e.preventDefault(); onCompareCant(); });
   document.getElementById('gear-btn').addEventListener('click', openSettings);
   document.getElementById('s-back-btn').addEventListener('click', closeSettings);
   document.getElementById('result-restart-btn').addEventListener('click', initQuiz);
@@ -951,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('s-margin-max').textContent = marginMax;
   });
 
-  setTimeout(() => { initQuiz(); }, 50);
+  setTimeout(() => { openSettings(); }, 50);
 });
 </script>
 </body>
